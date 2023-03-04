@@ -12,6 +12,77 @@
 
 import random
 import typing
+import TheNode as node
+
+
+theMap = [[node(x_cord=i, y_cord=j) for i in range(11)] for j in range(11)]
+
+SNAKE_NAME = "My_Snake"
+
+def updateNode(cords, value):
+    theMap[cords["y"]]["x"].set_value(value)
+
+def updateMap(board):
+    for cords in board['food']:
+        updateNode(cords, "food")
+
+    for cords in board['hazards']:
+        updateNode(cords, "hazard")
+
+    for cords in board['snakes']["body"]:
+        updateNode(cords, "snake")
+    
+    for snake in board['snakes']:
+        if snake['name'] == SNAKE_NAME:
+            updateNode(snake['head'], 'head')
+            theMap[snake['head']['y']][snake['head']['x']].setDist(0)
+
+
+def getNode(cords):
+    return theMap[cords['y']][cords['y']]
+
+def getDjikstras(head, objective):
+    currentSet = [head]
+    while True:
+        nodes = []
+        for current in currentSet:
+            if (getNode(current).cord[0] == objective["x"]) and (getNode(current).cord[0] == objective['y']):
+                return getBestNextMove(current), getNode(current).getDist()
+            
+            if getNode(current).visited == False:
+                nodes.extend(getNeighbors(current))
+                # step()
+        
+        currentSet = nodes
+
+
+
+            
+
+
+def step(cords):
+    pass
+
+def getNeighbors(cords):
+    pass
+
+def evalNeighbors(curr, cordList):
+    for cord in cordList:
+        if(getNode(cord).visited==False):
+            theMap[cord['y']][cord['x']].setDist(getNode(curr).getDist() + 1)
+
+def updateDistances(current, nodes):
+    pass
+
+def getBestNextMove(current):
+    #TODO Function that finds follows the shortest path, recursive?
+    pass
+
+
+
+
+
+
 
 
 # info is called when you create your Battlesnake on play.battlesnake.com
@@ -29,8 +100,10 @@ def info() -> typing.Dict:
   }
 
 
-# start is called when your Battlesnake begins a game
+# start is called when your Battlesnake begins ]a game
 def start(game_state: typing.Dict):
+
+
   print("GAME START")
 
 
