@@ -1,17 +1,39 @@
 
 from astar import *
-import bottle
 import copy
 import math
 import os
+import typing
 
 SNAKE_BUFFER = 3
-ID = 'de508402-17c8-4ac7-ab0b-f96cb53fbee8'
+ID = ''
 SNAKE = 1
 WALL = 2
 FOOD = 3
 GOLD = 4
 SAFETY = 5
+
+
+def info() -> typing.Dict:
+    print("INFO")
+
+    return {
+        "apiversion": "1",
+        "author": "",  # TODO: Your Battlesnake Username
+        "color": "#888888",  # TODO: Choose color
+        "head": "default",  # TODO: Choose head
+        "tail": "default",  # TODO: Choose tail
+    }
+
+
+# start is called when your Battlesnake begins a game
+def start(game_state: typing.Dict):
+    print("GAME START")
+
+
+# end is called when your Battlesnake finishes a game
+def end(game_state: typing.Dict):
+    print("GAME OVER\n")
 
 
 def goals(data):
@@ -26,13 +48,13 @@ def direction(from_cell, to_cell):
     dy = to_cell[1] - from_cell[1]
 
     if dx == 1:
-        return 'east'
+        return 'right'
     elif dx == -1:
-        return 'west'
+        return 'left'
     elif dy == -1:
-        return 'north'
+        return 'up'
     elif dy == 1:
-        return 'south'
+        return 'down'
 
 
 def distance(p, q):
@@ -45,7 +67,6 @@ def closest(items, start):
     closest_item = None
     closest_distance = 10000
 
-    # TODO: use builtin min for speed up
     for item in items:
         item_distance = distance(start, item)
         if item_distance < closest_distance:
@@ -76,60 +97,12 @@ def init(data):
     return mysnake, grid
 
 
-@bottle.route('/static/<path:path>')
-def static(path):
-    return bottle.static_file(path, root='static/')
-
-
-@bottle.get('/')
-def index():
-    head_url = '%s://%s/static/Traitor.gif' % (
-        bottle.request.urlparts.scheme,
-        bottle.request.urlparts.netloc
-    )
-
-    return {
-        'color': '#00ff00',
-        'head': head_url
-    }
-
-
-@bottle.post('/start')
-def start():
-    data = bottle.request.json
-
-    # TODO: Do things with data
-
-    return {
-        'taunt': 'battlesnake-python!'
-    }
-# DATA OBJECT
-# {
-#     "game": "hairy-cheese",
-#     "mode": "advanced",
-#     "turn": 4,
-#     "height": 20,
-#     "width": 30,
-#     "snakes": [
-#         <Snake Object>, <Snake Object>, ...
-#     ],
-#     "food": [
-#         [1, 2], [9, 3], ...
-#     ],
-#     "walls": [    // Advanced Only
-#         [2, 2]
-#     ],
-#     "gold": [     // Advanced Only
-#         [5, 5]
-#     ]
-# }
-
 # SNAKE
 # {
 #     "id": "1234-567890-123456-7890",
 #     "name": "Well Documented Snake",
 #     "status": "alive",
-#     "message": "Moved north",
+#     "message": "Moved up",
 #     "taunt": "Let's rock!",
 #     "age": 56,
 #     "health": 83,
@@ -140,9 +113,8 @@ def start():
 # }
 
 
-@bottle.post('/move')
-def move():
-    data = bottle.request.json
+def move(game_state: typing.Dict) -> typing.Dict:
+    data = game_state
     SNAKE, grid = init(data)
 
     # foreach snake
@@ -209,10 +181,6 @@ def move():
         for coord in new_SNAKE_coords:
             new_grid[coord[0]][coord[1]] = SNAKE
 
-        # printg(grid, 'orig')
-        # printg(new_grid, 'new')
-
-        # print SNAKE['coords'][-1]
         foodtotail = a_star(
             food, new_SNAKE_coords[-1], new_grid, new_SNAKE_coords)
         if foodtotail:
@@ -245,23 +213,11 @@ def move():
 
     return {
         'move': direction(path[0], path[1]),
-        'taunt': 'TRAITOR!'
+        'taunt': 'Hissssterical'
     }
 
 
-@bottle.post('/end')
-def end():
-    data = bottle.request.json
+if __name__ == "__main__":
+    from server import run_server
 
-    # TODO: Do things with data
-
-    return {
-        'taunt': 'Boa Down!'
-    }
-
-
-# Expose WSGI app (so gunicorn can find it)
-application = bottle.default_app()
-if __name__ == '__main__':
-    bottle.run(application, host=os.getenv(
-        'IP', '0.0.0.0'), port=os.getenv('PORT', '8080'))
+    run_server({"info": info, "start": start, "move": move, "end": end})
