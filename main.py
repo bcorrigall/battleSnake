@@ -84,20 +84,31 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     my_body = game_state['you']['body']
-    
-    if {"x" : my_head["x"]+1, "y" : my_head["y"]} in my_body:
-        is_move_safe["right"] = False
-    if {"x" : my_head["x"]-1, "y" : my_head["y"]} in my_body:
-        is_move_safe["left"] = False
-    if {"x" : my_head["x"], "y" : my_head["y"]+1} in my_body:
-        is_move_safe["up"] = False
-    if {"x" : my_head["x"], "y" : my_head["y"]-1} in my_body:
-        is_move_safe["down"] = False
+    opponents = game_state['board']['snakes']
+    while i < opponents.len(): 
+        if {"x" : my_head["x"]+1, "y" : my_head["y"]} in opponents[i]["body"]:
+            is_move_safe["right"] = False
+        if {"x" : my_head["x"]-1, "y" : my_head["y"]} in opponents[i]["body"]:
+            is_move_safe["left"] = False
+        if {"x" : my_head["x"], "y" : my_head["y"]+1} in opponents[i]["body"]:
+            is_move_safe["up"] = False
+        if {"x" : my_head["x"], "y" : my_head["y"]-1} in opponents[i]["body"]:
+            is_move_safe["down"] = False
 
 
+    # if {"x" : my_head["x"]+1, "y" : my_head["y"]} in my_body or opponents["body"]:
+    #     is_move_safe["right"] = False
+    # if {"x" : my_head["x"]-1, "y" : my_head["y"]} in my_body or opponents["body"]:
+    #     is_move_safe["left"] = False
+    # if {"x" : my_head["x"], "y" : my_head["y"]+1} in my_body or opponents["body"]:
+    #     is_move_safe["up"] = False
+    # if {"x" : my_head["x"], "y" : my_head["y"]-1} in my_body or opponents["body"]:
+    #     is_move_safe["down"] = False
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-    # opponents = game_state['board']['snakes']
+
+
+
 
     # Are there any safe moves left?
     safe_moves = []
@@ -115,12 +126,43 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     food = game_state['board']['food']
 
+<<<<<<< Updated upstream
     if safe_moves.len() == 1:
         next_move = safe_moves[0]
     else:
         if coming_from["left"] or coming_from["right"]:
             
 
+=======
+    next_move = "none"
+
+    if safe_moves.len() == 1:
+        next_move = safe_moves[0]
+    else:
+        if coming_from["left"] and not safe_moves["right"]:
+            if my_head["y"] < 6:
+                next_move = safe_moves["up"]
+            else: 
+                next_move = safe_moves["down"]
+        elif coming_from["right"] and not safe_moves["left"]:
+            if my_head["y"] < 6:
+                next_move = safe_moves["up"]
+            else: 
+                next_move = safe_moves["down"]
+        elif coming_from["down"] and not safe_moves["up"]:
+            if my_head["x"] < 6:
+                next_move = safe_moves["left"]
+            else: 
+                next_move = safe_moves["right"]
+        elif coming_from["up"] and not safe_moves["down"]:
+            if my_head["x"] < 6:
+                next_move = safe_moves["left"]
+            else: 
+                next_move = safe_moves["right"]
+
+    if next_move == "none":
+        next_move = random.choice(safe_moves)
+>>>>>>> Stashed changes
 
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
