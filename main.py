@@ -19,6 +19,7 @@ theMap = [[node(x_cord=i, y_cord=j) for i in range(11)] for j in range(11)]
 
 SNAKE_NAME = "My_Snake"
 
+
 def updateNode(cords, value):
     theMap[cords["y"]]["x"].set_value(value)
 
@@ -51,19 +52,19 @@ def getDjikstras(head, objective):
             
             if getNode(current).visited == False:
                 nodes.extend(getNeighbors(current))
-                # step()
+
+            if(getNode(current).visited==False):
+                theMap[current['y']][current['x']].setDist(getNode(current).getDist() + 1)
+            
         
         currentSet = nodes
+        if len(nodes) == 0:
+            break
 
-
-
-            
-
-
-def step(cords):
-    pass
+    return None, None
 
 def getNeighbors(cords):
+
     pass
 
 def evalNeighbors(curr, cordList):
@@ -71,17 +72,29 @@ def evalNeighbors(curr, cordList):
         if(getNode(cord).visited==False):
             theMap[cord['y']][cord['x']].setDist(getNode(curr).getDist() + 1)
 
-def updateDistances(current, nodes):
-    pass
-
 def getBestNextMove(current):
     #TODO Function that finds follows the shortest path, recursive?
-    pass
+    nodes = getNeighbors(current)
 
+    for i in nodes:
+        if getNode(i).getDist() ==0:
+            return i
 
+        if getNode(i).getDist() < getNode(current).getDist():
+            return getBestNextMove(i)
 
-
-
+def getDir(cord, head):
+    if cord["x"] < head["x"]:
+        return "left"
+    
+    if cord["x"] > head["x"]:
+        return "right"
+    
+    if cord["y"] < head["y"]:
+        return "down"
+    
+    if cord["y"] > head["y"]:
+        return "up"
 
 
 
