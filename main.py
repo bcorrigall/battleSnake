@@ -24,8 +24,8 @@ def info() -> typing.Dict:
     "apiversion": "1",
     "author": "Snakes on a Plane",  # TODO: Your Battlesnake Username
     "color": "#FF0000",  # TODO: Choose color
-    "head": "default",  # TODO: Choose head
-    "tail": "default",  # TODO: Choose tail
+    "head": "dragon",  # TODO: Choose head
+    "tail": "dragon",  # TODO: Choose tail
   }
 
 
@@ -144,9 +144,19 @@ def move(game_state: typing.Dict) -> typing.Dict:
         next_move = "right"
     elif coming_from["up"] and "down" not in safe_moves:
       if my_head["x"] < 6 and "left" in safe_moves:
-        next_move = "left"
-      else:
         next_move = "right"
+      else:
+        next_move = "left"
+
+  # if next_move == "none":
+  #   if coming_from["down"]:
+  #     next_move = "up"
+  #   elif coming_from["up"]:
+  #     next_move = "down"
+  #   elif coming_from["left"]:
+  #     next_move = "right"
+  #   elif coming_from["right"]:
+  #     next_move = "left"
 
   if next_move == "none":
     next_move = random.choice(safe_moves)
